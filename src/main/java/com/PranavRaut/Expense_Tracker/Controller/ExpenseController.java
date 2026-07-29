@@ -58,7 +58,7 @@ public class ExpenseController {
     }
 
     @GetMapping("/{category}")
-    public Expense getByCategory (@PathVariable("category") String category){
+    public List<Expense> getByCategory (@PathVariable("category") String category){
         return expenseService.getByCategory(category);
     }
 
@@ -75,5 +75,15 @@ public class ExpenseController {
     @GetMapping("title/{word}")
     public List<Expense> findByTitleContaining (@PathVariable("word") String word){
         return expenseService.findByTitleContaining(word);
+    }
+
+    @GetMapping("/total")
+    public int totalExpense (){
+        return expenseService.totalExpense();
+    }
+
+    @GetMapping("/highest")
+    public Expense highestExpense (){
+        return expenseService.highestExpense();
     }
 }

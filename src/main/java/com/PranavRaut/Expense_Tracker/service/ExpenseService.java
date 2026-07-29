@@ -5,8 +5,11 @@ import com.PranavRaut.Expense_Tracker.repository.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 
 @Component
 public class ExpenseService {
@@ -30,7 +33,7 @@ public class ExpenseService {
         expenseRepository.deleteById(id);
     }
 
-    public Expense getByCategory (String Category){
+    public List<Expense> getByCategory (String Category){
         return expenseRepository.findByCategory(Category);
     }
 
@@ -45,4 +48,31 @@ public class ExpenseService {
     public List<Expense> findByTitleContaining (String word){
         return expenseRepository.findByTitleContaining(word);
     }
+
+    public int totalExpense (){
+        List<Expense> numbers = expenseRepository.findAll();
+        int sum = 0;
+
+        for (Expense num : numbers ) {
+            sum += num.getAmount();
+        }
+
+        return sum;
+    }
+
+    public Expense highestExpense (){
+        List<Expense> numbers = expenseRepository.findAll();
+        if(!numbers.isEmpty()) {
+
+            Expense highestExpense = numbers.getFirst();
+            for (Expense num : numbers) {
+                if (num.getAmount() > highestExpense.getAmount()) {
+                    highestExpense = num;
+                }
+            }
+            return highestExpense;
+        }
+        return null;
+     }
+
 }
