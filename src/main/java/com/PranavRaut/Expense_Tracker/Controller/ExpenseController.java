@@ -62,4 +62,18 @@ public class ExpenseController {
         return expenseService.getByCategory(category);
     }
 
+    @GetMapping("/greater/{amt}")
+    public List<Expense> greaterThan (@PathVariable("amt") Double amt){
+        return expenseService.greaterThan(amt);
+    }
+
+    @GetMapping("/less/{amt}")
+    public List<Expense> lessThan (@PathVariable("amt") Double amt){
+        return expenseService.lessThan(amt);
+    }
+
+    @GetMapping("title/{word}")
+    public List<Expense> findByTitleContaining (@PathVariable("word") String word){
+        return expenseService.findByTitleContaining(word);
+    }
 }

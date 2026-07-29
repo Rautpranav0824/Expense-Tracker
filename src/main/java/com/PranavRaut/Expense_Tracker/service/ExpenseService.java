@@ -33,4 +33,16 @@ public class ExpenseService {
     public Expense getByCategory (String Category){
         return expenseRepository.findByCategory(Category);
     }
+
+    public List<Expense> greaterThan (Double Amount){
+        return expenseRepository.findByAmountGreaterThan(Amount);
+    }
+
+    public List<Expense> lessThan (Double Amount){
+        return expenseRepository.findByAmountLessThan(Amount);
+    }
+
+    public List<Expense> findByTitleContaining (String word){
+        return expenseRepository.findByTitleContaining(word);
+    }
 }
