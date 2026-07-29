@@ -30,4 +30,7 @@ public class ExpenseService {
         expenseRepository.deleteById(id);
     }
 
+    public Expense getByCategory (String Category){
+        return expenseRepository.findByCategory(Category);
+    }
 }

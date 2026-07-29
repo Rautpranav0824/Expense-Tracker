@@ -57,5 +57,9 @@ public class ExpenseController {
         }
     }
 
+    @GetMapping("/{category}")
+    public Expense getByCategory (@PathVariable("category") String category){
+        return expenseService.getByCategory(category);
+    }
 
 }
