@@ -5,6 +5,7 @@ import com.PranavRaut.Expense_Tracker.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,5 +86,15 @@ public class ExpenseController {
     @GetMapping("/highest")
     public Expense highestExpense (){
         return expenseService.highestExpense();
+    }
+
+    @GetMapping("/{year}/{month}")
+    public List<Expense> monthlyList (@PathVariable("month")int month , @PathVariable("year") int year){
+        return expenseService.monthly(month,year);
+    }
+
+    @GetMapping("total/{year}/{month}")
+    public Double monthlyExpense (@PathVariable("month")int month , @PathVariable("year") int year){
+        return expenseService.monthlyExpense(month,year);
     }
 }

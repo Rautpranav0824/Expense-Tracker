@@ -5,6 +5,7 @@ import com.PranavRaut.Expense_Tracker.repository.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -73,6 +74,35 @@ public class ExpenseService {
             return highestExpense;
         }
         return null;
+     }
+
+     public List<Expense> monthly (int month , int year ){
+        List<Expense> expenses = expenseRepository.findAll();
+        List<Expense> monthly = new ArrayList<>();
+        if(!expenses.isEmpty()){
+            for ( Expense num : expenses){
+                if(num.getDate().getMonthValue() == month && num.getDate().getYear() == year){
+                    monthly.add(num);
+                }
+            }
+            return monthly;
+        }
+        return List.of();
+     }
+
+     public Double monthlyExpense (int month , int year){
+        List<Expense> expenses = expenseRepository.findAll();
+        if(!expenses.isEmpty()){
+            double sum = 0;
+
+            for (Expense num : expenses){
+                if(num.getDate().getMonthValue() == month && num.getDate().getYear() == year){
+                    sum += num.getAmount();
+                }
+            }
+            return sum;
+        }
+        return 0.0;
      }
 
 }
