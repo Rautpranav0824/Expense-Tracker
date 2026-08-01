@@ -1,6 +1,8 @@
 package com.PranavRaut.Expense_Tracker.Controller;
 
+import com.PranavRaut.Expense_Tracker.entity.Expense;
 import com.PranavRaut.Expense_Tracker.entity.User;
+import com.PranavRaut.Expense_Tracker.service.ExpenseService;
 import com.PranavRaut.Expense_Tracker.service.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ExpenseService expenseService;
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers (){
@@ -60,5 +65,19 @@ public class UserController {
         }
         return  ResponseEntity.notFound().build();
     }
+
+    // endpoints connected to Expenses
+
+    @GetMapping("/{username}")
+    public ResponseEntity<List<Expense>>  userExpenses (@PathVariable("username") String username) {
+        return new ResponseEntity<>(userService.userExpenses(username), HttpStatus.OK);
+    }
+
+    @PostMapping("/{username}/expenses")
+    public ResponseEntity<?> addUserExpense (@RequestBody Expense expense , @PathVariable("username") String username){
+        return new ResponseEntity<>(userService.addUserExpense(username,expense) , HttpStatus.CREATED);
+    }
+
+
 
 }
