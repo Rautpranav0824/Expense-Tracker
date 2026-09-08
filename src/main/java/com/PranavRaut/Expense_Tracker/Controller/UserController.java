@@ -57,7 +57,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{username")
+    @DeleteMapping("/{username}")
     public ResponseEntity<String> deleteUser (@PathVariable("username") String username){
         boolean b = userService.deleteUser(username);
         if(b){
@@ -68,7 +68,7 @@ public class UserController {
 
     // endpoints connected to Expenses
 
-    @GetMapping("/{username}")
+    @GetMapping("/{username}/expenses")
     public ResponseEntity<List<Expense>>  userExpenses (@PathVariable("username") String username) {
         return new ResponseEntity<>(userService.userExpenses(username), HttpStatus.OK);
     }
@@ -78,6 +78,14 @@ public class UserController {
         return new ResponseEntity<>(userService.addUserExpense(username,expense) , HttpStatus.CREATED);
     }
 
+    @PutMapping("/{username}/{id}/expenses")
+    public ResponseEntity<?> updateExpense (@PathVariable("username") String username , @RequestBody Expense expense , @PathVariable("id") ObjectId id){
+        return new ResponseEntity<>(userService.updateExpense(username , id , expense) , HttpStatus.OK);
+    }
 
+    @DeleteMapping("/{username}/{id}/expenses")
+    public ResponseEntity<?> deleteExpense (@PathVariable("username") String username , @PathVariable("id") ObjectId id){
+        return  new ResponseEntity<>(userService.deleteExpense(username,id) , HttpStatus.OK);
+    }
 
 }

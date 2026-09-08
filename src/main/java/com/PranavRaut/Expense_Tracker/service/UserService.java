@@ -6,19 +6,28 @@ import com.PranavRaut.Expense_Tracker.repository.ExpenseRepository;
 import com.PranavRaut.Expense_Tracker.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class UserService {
 
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private ExpenseRepository expenseRepository;
+
+    public User findByUserName(String userName){
+        return userRepository.findByUsername(userName);
+    }
 
     public List<User> getAllUsers(){
         return userRepository.findAll();
@@ -29,7 +38,7 @@ public class UserService {
     }
 
     public User getByusername(String username){
-        return userRepository.findByUserName(username);
+        return userRepository.findByUsername(username);
     }
 
     public User editUser(ObjectId id , User Newuser){
@@ -37,7 +46,7 @@ public class UserService {
         if (OldUser != null){
             OldUser.setUsername(Newuser.getUsername() != null && !Newuser.getUsername().isBlank() ? Newuser.getUsername() : OldUser.getUsername());
             OldUser.setPassword(Newuser.getPassword() != null && !Newuser.getPassword().isBlank() ? Newuser.getPassword() : OldUser.getPassword());
-            OldUser.setEmail(Newuser.getEmail() != null && !Newuser.getEmail().isBlank() ? Newuser.getEmail() : OldUser.getEmail());
+
 
             userRepository.save(OldUser);
             return OldUser;
@@ -47,7 +56,7 @@ public class UserService {
     }
 
     public boolean deleteUser (String username){
-        User byUserName = userRepository.findByUserName(username);
+        User byUserName = userRepository.findByUsername(username);
         if(byUserName != null){
             userRepository.delete(byUserName);
             return true;
@@ -57,9 +66,11 @@ public class UserService {
         }
     }
 
+    // services ( users connected to expenses )
+
     //get all expenses of a user
     public List<Expense> userExpenses (String username){
-        User user = userRepository.findByUserName(username);
+        User user = userRepository.findByUsername(username);
         if ( user == null){
             throw new RuntimeException("User not Found");
         }
@@ -69,7 +80,7 @@ public class UserService {
 
     //add expense to a user
     public Expense addUserExpense (String username , Expense expense){
-        User user = userRepository.findByUserName(username);
+        User user = userRepository.findByUsername(username);
         if(user == null){
             throw new RuntimeException("User not Found");
         }
@@ -83,7 +94,7 @@ public class UserService {
 
     //get one expense of user
     public Expense getExpense (String username , ObjectId id){
-        User user = userRepository.findByUserName(username);
+        User user = userRepository.findByUsername(username);
         if(user == null){
             throw new RuntimeException("User Not found");
         }
@@ -98,7 +109,7 @@ public class UserService {
 
     //update expense
     public Expense updateExpense (String username , ObjectId id , Expense newExpense){
-        User user = userRepository.findByUserName(username);
+        User user = userRepository.findByUsername(username);
         if(user == null){
             throw new RuntimeException("User Not found");
         }
@@ -116,4 +127,42 @@ public class UserService {
         throw new RuntimeException("Expense not found");
     }
 
+    //delete one expense of a user
+    public Expense deleteExpense (String username , ObjectId id){
+        User user = userRepository.findByUsername(username);
+        Expense expenseToDelete = null;
+        if (user == null){
+            throw new RuntimeException("User not Found");
+        }
+        for (Expense expense : user.getExpenses()){
+            if (expense.getId().equals(id)){
+                expenseToDelete = expense;
+                break;
+            }
+        }
+        if (expenseToDelete == null) {
+            throw new RuntimeException("Expense not found");
+        }
+        user.getExpenses().remove(expenseToDelete);
+        userRepository.save(user);
+        expenseRepository.delete(expenseToDelete);
+
+        return expenseToDelete;
+    }
+
+    public void saveNewUser (User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("USER"));
+        userRepository.save(user);
+    }
+    public void saveAdmin (User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("ADMIN"));
+        userRepository.save(user);
+    }
+
+
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
 }

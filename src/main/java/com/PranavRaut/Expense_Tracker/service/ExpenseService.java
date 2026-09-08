@@ -1,9 +1,12 @@
 package com.PranavRaut.Expense_Tracker.service;
 
 import com.PranavRaut.Expense_Tracker.entity.Expense;
+import com.PranavRaut.Expense_Tracker.entity.User;
 import com.PranavRaut.Expense_Tracker.repository.ExpenseRepository;
+import com.PranavRaut.Expense_Tracker.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,8 +21,23 @@ public class ExpenseService {
     @Autowired
     private ExpenseRepository expenseRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<Expense> getallexpense (){
         return expenseRepository.findAll();
+    }
+
+    @Transactional
+    public void saveExpense(Expense expense, String username) {
+
+        User user = userRepository.findByUsername(username);
+
+        expenseRepository.save(expense);
+
+        user.getExpenses().add(expense);
+
+        userRepository.save(user);
     }
 
     public void saveExpense (Expense expense){

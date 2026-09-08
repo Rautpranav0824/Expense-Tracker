@@ -22,9 +22,11 @@ public class User {
     @Indexed(unique = true)
     private String username ;
     private String password ;
-    private String email;
+
 
     @DBRef
     private List<Expense> expenses = new ArrayList<>();
+
+    private List<String> roles = new ArrayList<>();
 
 }
